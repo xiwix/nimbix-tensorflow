@@ -1,44 +1,45 @@
-FROM nimbix/base-ubuntu-nvidia-mvapich2
-# nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
+FROM nimbix/base-ubuntu-nvidia
 
-MAINTAINER Craig Citro <craigcitro@google.com>
-
-# Pick up some TF dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Pick up some TF dependencies (TODO: minimize)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
+        gfortran \
+        libblas-dev \
         libfreetype6-dev \
+        libhdf5-dev \
+        liblapack-dev \
         libpng12-dev \
         libzmq3-dev \
         pkg-config \
         python \
         python-dev \
+        python-pip \
         rsync \
         software-properties-common \
         unzip \
-        && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py
-
-RUN pip --no-cache-dir install \
+RUN sudo pip --no-cache-dir install \
         ipykernel \
         jupyter \
         matplotlib \
         numpy \
-        scipy \
-        sklearn \
         pandas \
         Pillow \
-        && \
-    python -m ipykernel.kernelspec
+        scipy \
+        sklearn \
+ && python -m ipykernel.kernelspec
 
-RUN pip --no-cache-dir install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.0.0-cp27-none-linux_x86_64.whl
-
-# RUN ln -s /usr/bin/python3 /usr/bin/python#
+RUN sudo pip --no-cache-dir install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.0.0-cp27-none-linux_x86_64.whl
+RUN sudo pip --no-cache-dir install \
+        h5py \
+        hyperopt \
+        keras \
+        scikit-image \
+        tflearn  
 
 # Set up our notebook config.
 COPY jupyter_notebook_config.py /home/nimbix/.jupyter/
