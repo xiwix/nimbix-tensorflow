@@ -15,12 +15,15 @@ RUN apt-get update \
         pkg-config \
         python \
         python-dev \
-        python-pip \
         rsync \
         software-properties-common \
         unzip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
+
+RUN curl -O https://bootstrap.pypa.io/get-pip.py \
+ && python get-pip.py \
+ && rm get-pip.py
 
 RUN sudo pip --no-cache-dir install \
         ipykernel \
@@ -34,7 +37,7 @@ RUN sudo pip --no-cache-dir install \
  && python -m ipykernel.kernelspec
 
 RUN sudo pip --no-cache-dir install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.0.0-cp27-none-linux_x86_64.whl
-RUN sudo pip --no-cache-dir install \
+RUN sudo pip install \
         h5py \
         hyperopt \
         keras \
